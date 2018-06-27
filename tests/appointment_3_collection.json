@@ -1,0 +1,804 @@
+{
+	"info": {
+		"_postman_id": "495d90d8-b1ba-4fd5-925f-f95c08e47a21",
+		"name": "Api Documentation",
+		"description": "Api Documentation",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "appointments",
+			"description": "Folder for appointments",
+			"item": [
+				{
+					"name": "get user authentication",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "5af95d7a-f497-41c0-ad51-d8736166b136",
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"pm.globals.set(\"token\", jsonData.data.session);",
+									"",
+									"",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "",
+								"value": "",
+								"disabled": true
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"username\": \"ZHJpY2Np\", \"password\": \"VGVzdDIwMTAh\"}"
+						},
+						"url": {
+							"raw": "https://qc1.iclinicemr.com:8443/user/authentication/login",
+							"protocol": "https",
+							"host": [
+								"qc1",
+								"iclinicemr",
+								"com"
+							],
+							"port": "8443",
+							"path": [
+								"user",
+								"authentication",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create appointment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f63d6d3b-d173-4569-b060-7a989e71fa17",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Successful POST request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([201,202]);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"});",
+									"",
+									"tests[\"Id is Present\"] = responseBody.has(\"id\");",
+									"tests[\"Start Date is Present\"] = responseBody.has(\"startDate\");",
+									"tests[\"End Date is Present\"] = responseBody.has(\"endDate\");",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"var appointmentId = jsonData.data.id;",
+									"",
+									"pm.globals.set(\"appointmentId\", jsonData.data.id);",
+									"pm.globals.set(\"calendarId\", jsonData.data.calendarId);",
+									"pm.globals.set(\"patientId\", jsonData.data.patientId);",
+									"pm.globals.set(\"startDate\", jsonData.data.startDate);",
+									"pm.globals.set(\"endDate\", jsonData.data.endDate);",
+									"",
+									"console.log(\"Appointment Id is \" + jsonData.data.id);"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "*/*"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "x-auth-token",
+								"value": "{{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"auditingPatientId\":null,\"auditingPatientName\":\"\",\"auditingDetail\":\"\",\"auditFields\":[],\"updated\":null,\"created\":null,\"calendarId\":\"e50d6ee4-d1c0-42b8-928c-40170e37137b\",\"startDate\":\"2018-06-21\",\"endDate\":\"2018-06-21\",\"startTime\":\"12:00:00\",\"endTime\":\"12:30:00\",\"description\":null,\"typeOrReason\":\"\",\"status\":\"Sched\",\"recurring\":null,\"recurringId\":null,\"recurringStartDate\":null,\"recurringEndDate\":null,\"recurringType\":null,\"recurringExceptionDates\":[],\"patientId\":\"4b3f11a8-fcd0-4e76-9637-87fe6549cc88\",\"procedureId\":null,\"actualStartTime\":null,\"actualEndTime\":null,\"roomName\":null,\"referringDoctor\":null,\"referringDoctorInfo\":null,\"arrivalTime\":null,\"createdBy\":null,\"todoIssued\":null,\"eventColour\":null,\"patientFiles\":null,\"importedFrom\":null,\"aTimestamp\":null,\"fourdRecordId\":null,\"fourdPracId\":1721,\"fourdPatientId\":0,\"fulfilled\":null,\"billed\":null,\"requestOnly\":null,\"patientInfo\":null}"
+						},
+						"url": {
+							"raw": "https://qc1.iclinicemr.com:8443/appointments",
+							"protocol": "https",
+							"host": [
+								"qc1",
+								"iclinicemr",
+								"com"
+							],
+							"port": "8443",
+							"path": [
+								"appointments"
+							]
+						},
+						"description": "Create appointment"
+					},
+					"response": []
+				},
+				{
+					"name": "Get appointments",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "28f0cadb-491f-454d-91dd-9ac8847265f4",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"});",
+									"",
+									"pm.test(\"Data is present\", function () {",
+									"    pm.expect(pm.response.text()).to.include(\"data\");",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "*/*"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "x-auth-token",
+								"value": "{{token}}"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "http://qc1.iclinicemr.com:8181/appointments?calendarids={{calendarId}}&startdate={{startDate}}&enddate={{endDate}}",
+							"protocol": "http",
+							"host": [
+								"qc1",
+								"iclinicemr",
+								"com"
+							],
+							"port": "8181",
+							"path": [
+								"appointments"
+							],
+							"query": [
+								{
+									"key": "calendarids",
+									"value": "{{calendarId}}"
+								},
+								{
+									"key": "startdate",
+									"value": "{{startDate}}"
+								},
+								{
+									"key": "enddate",
+									"value": "{{endDate}}"
+								}
+							]
+						},
+						"description": "Get appointments from all calendars the user has access to in given date range"
+					},
+					"response": []
+				},
+				{
+					"name": "Get appointments for a patient",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f4a3ca1f-8188-4180-babf-0d581b25ca1f",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"});",
+									"",
+									"pm.test(\"Data is present\", function () {",
+									"    pm.expect(pm.response.text()).to.include(\"data\");",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "*/*"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "x-auth-token",
+								"value": "{{token}}"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "http://qc1.iclinicemr.com:8181/appointments/patient/{{patientId}}",
+							"protocol": "http",
+							"host": [
+								"qc1",
+								"iclinicemr",
+								"com"
+							],
+							"port": "8181",
+							"path": [
+								"appointments",
+								"patient",
+								"{{patientId}}"
+							]
+						},
+						"description": "Get appointments for a patient from all calendars the user has access to"
+					},
+					"response": []
+				},
+				{
+					"name": "Get an appointment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "1fd06cb4-6f23-4147-94b6-7dc94583f257",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"});",
+									"",
+									"pm.test(\"Data is present\", function () {",
+									"    pm.expect(pm.response.text()).to.include(\"data\");",
+									"});",
+									"",
+									"tests[\"Id is Present\"] = responseBody.has(\"id\");",
+									"tests[\"Start Date is Present\"] = responseBody.has(\"startDate\");",
+									"tests[\"End Date is Present\"] = responseBody.has(\"endDate\");"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "*/*"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "x-auth-token",
+								"value": "{{token}}"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "http://qc1.iclinicemr.com:8181/appointments/{{appointmentId}}",
+							"protocol": "http",
+							"host": [
+								"qc1",
+								"iclinicemr",
+								"com"
+							],
+							"port": "8181",
+							"path": [
+								"appointments",
+								"{{appointmentId}}"
+							]
+						},
+						"description": "Get an appointment by id that the user has access to"
+					},
+					"response": []
+				},
+				{
+					"name": "Find next available slot",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "5608db71-fc2e-4236-9380-c0c2509152a4",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"});",
+									"",
+									"pm.test(\"Data is present\", function () {",
+									"    pm.expect(pm.response.text()).to.include(\"data\");",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "*/*"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "x-auth-token",
+								"value": "{{token}}"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "http://qc1.iclinicemr.com:8181/appointments/available?calendarids={{calendarId}}&startdate={{startDate}}&enddate={{endDate}}&duration=PT30M",
+							"protocol": "http",
+							"host": [
+								"qc1",
+								"iclinicemr",
+								"com"
+							],
+							"port": "8181",
+							"path": [
+								"appointments",
+								"available"
+							],
+							"query": [
+								{
+									"key": "calendarids",
+									"value": "{{calendarId}}"
+								},
+								{
+									"key": "startdate",
+									"value": "{{startDate}}"
+								},
+								{
+									"key": "enddate",
+									"value": "{{endDate}}"
+								},
+								{
+									"key": "duration",
+									"value": "PT30M"
+								}
+							]
+						},
+						"description": "Find next available slot from calendars that the user has access to in given date range given by list of calendar ids"
+					},
+					"response": []
+				},
+				{
+					"name": "Update an appointment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "343fddfa-d432-4007-b907-c601c98874a0",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "*/*"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "x-auth-token",
+								"value": "{{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{  \r\n   \"auditingPatientId\":null,\r\n   \"auditingPatientName\":\"\",\r\n   \"auditingDetail\":\"\",\r\n   \"auditFields\":[  \r\n\r\n   ],\r\n   \"updated\":null,\r\n   \"created\":null,\r\n   \"calendarId\":\"e50d6ee4-d1c0-42b8-928c-40170e37137b\",\r\n   \"startDate\":\"2018-06-21\",\r\n   \"endDate\":\"2018-06-21\",\r\n   \"startTime\":\"12:00:00\",\r\n   \"endTime\":\"12:30:00\",\r\n   \"description\":null,\r\n   \"typeOrReason\":\"\",\r\n   \"status\":\"Sched\",\r\n   \"recurring\":null,\r\n   \"recurringId\":null,\r\n   \"recurringStartDate\":null,\r\n   \"recurringEndDate\":null,\r\n   \"recurringType\":null,\r\n   \"recurringExceptionDates\":[  \r\n\r\n   ],\r\n   \"patientId\":\"4b3f11a8-fcd0-4e76-9637-87fe6549cc88\",\r\n   \"procedureId\":null,\r\n   \"actualStartTime\":null,\r\n   \"actualEndTime\":null,\r\n   \"roomName\":null,\r\n   \"referringDoctor\":null,\r\n   \"referringDoctorInfo\":null,\r\n   \"arrivalTime\":null,\r\n   \"createdBy\":null,\r\n   \"todoIssued\":null,\r\n   \"eventColour\":null,\r\n   \"patientFiles\":null,\r\n   \"importedFrom\":null,\r\n   \"aTimestamp\":null,\r\n   \"fourdRecordId\":null,\r\n   \"fourdPracId\":1721,\r\n   \"fourdPatientId\":0,\r\n   \"fulfilled\":null,\r\n   \"billed\":null,\r\n   \"requestOnly\":null,\r\n   \"patientInfo\":null\r\n}"
+						},
+						"url": {
+							"raw": "http://qc1.iclinicemr.com:8181/appointments/{{appointmentId}}",
+							"protocol": "http",
+							"host": [
+								"qc1",
+								"iclinicemr",
+								"com"
+							],
+							"port": "8181",
+							"path": [
+								"appointments",
+								"{{appointmentId}}"
+							]
+						},
+						"description": "Update an appointment by id that the user has update access to"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete an appointment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "2319718e-d1cf-420f-a192-3b0593c3ab1b",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "*/*"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "x-auth-token",
+								"value": "{{token}}"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "http://qc1.iclinicemr.com:8181/appointments/{{appointmentId}}",
+							"protocol": "http",
+							"host": [
+								"qc1",
+								"iclinicemr",
+								"com"
+							],
+							"port": "8181",
+							"path": [
+								"appointments",
+								"{{appointmentId}}"
+							]
+						},
+						"description": "Delete an appointment by id that the user has update access to"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "calendars",
+			"description": "Folder for calendars",
+			"item": [
+				{
+					"name": "Get all calendars",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "http://qc1.iclinicemr.com:8181/calendars",
+							"protocol": "http",
+							"host": [
+								"qc1",
+								"iclinicemr",
+								"com"
+							],
+							"port": "8181",
+							"path": [
+								"calendars"
+							]
+						},
+						"description": "Get all calendars that the user has read access to"
+					},
+					"response": []
+				},
+				{
+					"name": "Get a single calendar",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "http://qc1.iclinicemr.com:8181/calendars/:id",
+							"protocol": "http",
+							"host": [
+								"qc1",
+								"iclinicemr",
+								"com"
+							],
+							"port": "8181",
+							"path": [
+								"calendars",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{id}}"
+								}
+							]
+						},
+						"description": "Get a single calendar, that the user has read access to, by its UUID"
+					},
+					"response": []
+				},
+				{
+					"name": "Update a single calendar config",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "calendarDto"
+						},
+						"url": {
+							"raw": "http://qc1.iclinicemr.com:8181/calendars/:id/config",
+							"protocol": "http",
+							"host": [
+								"qc1",
+								"iclinicemr",
+								"com"
+							],
+							"port": "8181",
+							"path": [
+								"calendars",
+								":id",
+								"config"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{id}}"
+								}
+							]
+						},
+						"description": "Update a single calendar config, that the user has admin access to, by its UUID"
+					},
+					"response": []
+				},
+				{
+					"name": "Reset a single calendar config to default",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "http://qc1.iclinicemr.com:8181/calendars/:id/config/default",
+							"protocol": "http",
+							"host": [
+								"qc1",
+								"iclinicemr",
+								"com"
+							],
+							"port": "8181",
+							"path": [
+								"calendars",
+								":id",
+								"config",
+								"default"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{id}}"
+								}
+							]
+						},
+						"description": "Reset a single calendar config, that the user has admin access to, by its UUID to default"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "user-config",
+			"description": "Folder for user-config",
+			"item": [
+				{
+					"name": "Get the user config",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "http://qc1.iclinicemr.com:8181/user-config",
+							"protocol": "http",
+							"host": [
+								"qc1",
+								"iclinicemr",
+								"com"
+							],
+							"port": "8181",
+							"path": [
+								"user-config"
+							]
+						},
+						"description": "Get user's appointment user config"
+					},
+					"response": []
+				},
+				{
+					"name": "Update the user config",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "userConfigDto"
+						},
+						"url": {
+							"raw": "http://qc1.iclinicemr.com:8181/user-config",
+							"protocol": "http",
+							"host": [
+								"qc1",
+								"iclinicemr",
+								"com"
+							],
+							"port": "8181",
+							"path": [
+								"user-config"
+							]
+						},
+						"description": "Update user's appointment user config"
+					},
+					"response": []
+				},
+				{
+					"name": "Import user config",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "userConfigImportArrayDto"
+						},
+						"url": {
+							"raw": "http://qc1.iclinicemr.com:8181/user-config/import",
+							"protocol": "http",
+							"host": [
+								"qc1",
+								"iclinicemr",
+								"com"
+							],
+							"port": "8181",
+							"path": [
+								"user-config",
+								"import"
+							]
+						},
+						"description": "4D calls this endpoint to send export data"
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
